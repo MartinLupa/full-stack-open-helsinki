@@ -23,7 +23,7 @@ that renders notes to display
 end note
 
 browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
-browser->server: { note: "This is a new note"}
+browser->server: Payload: text | note: "This is a new note"
 note over server:
 server receives the input data from the form
 in the request body and executes the code to
