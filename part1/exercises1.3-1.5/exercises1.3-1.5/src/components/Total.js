@@ -1,11 +1,11 @@
 import React from "react";
 
-export const Total = ({ part1, part2, part3 }) => {
+export const Total = ({ parts }) => {
   return (
     <div>
       <p>
         Number of exercises{" "}
-        {part1.exercises + part2.exercises + part3.exercises}
+        {parts[0].exercises + parts[1].exercises + parts[2].exercises}
       </p>
     </div>
   );
