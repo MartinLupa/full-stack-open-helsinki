@@ -1,4 +1,5 @@
 import React from "react";
+import { StatisticLine } from "./StatisticLine";
 
 export const Statistics = ({ props }) => {
   if (props.all === 0) {
@@ -8,12 +9,12 @@ export const Statistics = ({ props }) => {
     <div>
       <h1>Statistics</h1>
       <div>
-        <p>Good: {props.good}</p>
-        <p>Neutral: {props.neutral}</p>
-        <p>Bad: {props.bad}</p>
-        <p>All: {props.all}</p>
-        <p>Average: {props.average}</p>
-        <p>Positive: {props.positive} %</p>
+        <StatisticLine text={"Good"} value={props.good} />
+        <StatisticLine text={"Neutral"} value={props.neutral} />
+        <StatisticLine text={"Bad"} value={props.bad} />
+        <StatisticLine text={"All"} value={props.all} />
+        <StatisticLine text={"Average"} value={props.average} />
+        <StatisticLine text={"Positive"} value={props.positive} />
       </div>
     </div>
   );
