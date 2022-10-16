@@ -1,14 +1,15 @@
 import React from "react";
 
 export const Total = ({ course }) => {
+  let total = 0;
+
+  course.parts.forEach((part) => {
+    total += part.exercises;
+  });
+
   return (
     <div>
-      <p>
-        Number of exercises{" "}
-        {course.parts[0].exercises +
-          course.parts[1].exercises +
-          course.parts[2].exercises}
-      </p>
+      <h2>total of {total} exercises</h2>
     </div>
   );
 };
