@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { AddPersonForm } from "./components/AddPersonForm";
+import { Filter } from "./components/Filter";
+import { Phonebook } from "./components/Phonebook";
 
 const phonebookInitialState = [
   { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -63,30 +66,17 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
 
-      <p>
-        Filter shown with{" "}
-        <input type="text" onChange={handleFilterChange} value={filter} />
-      </p>
+      <Filter eventHandler={handleFilterChange} filter={filter} />
 
-      <h2>Add new</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name: <input onChange={handleNameInput} value={newName} />
-          <br />
-          number: <input onChange={handleNumberInput} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <ul>
-        {persons.map((person) => (
-          <li key={person.name}>
-            {person.name} - {person.number}
-          </li>
-        ))}
-      </ul>
+      <AddPersonForm
+        submitHandler={handleSubmit}
+        nameHandler={handleNameInput}
+        numberHandler={handleNumberInput}
+        name={newName}
+        number={newNumber}
+      />
+
+      <Phonebook persons={persons} />
     </div>
   );
 };
