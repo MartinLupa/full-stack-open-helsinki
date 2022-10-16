@@ -3,9 +3,14 @@ import { useState } from "react";
 const App = () => {
   const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
-  const handleInputChange = (event) => {
+  const handleNameInput = (event) => {
     setNewName(event.target.value);
+  };
+
+  const handleNumberInput = (event) => {
+    setNewNumber(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -22,10 +27,12 @@ const App = () => {
     if (isNewName) {
       const newPerson = {
         name: newName,
+        number: newNumber,
       };
 
       setPersons(persons.concat(newPerson));
       setNewName("");
+      setNewNumber("");
     }
   };
 
@@ -34,7 +41,8 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          name: <input onChange={handleInputChange} value={newName} />
+          name: <input onChange={handleNameInput} value={newName} />
+          number: <input onChange={handleNumberInput} value={newNumber} />
         </div>
         <div>
           <button type="submit">add</button>
