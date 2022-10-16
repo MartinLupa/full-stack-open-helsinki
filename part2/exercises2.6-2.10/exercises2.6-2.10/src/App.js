@@ -10,13 +10,23 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    let isNewName = true;
 
-    const newPerson = {
-      name: newName,
-    };
+    persons.forEach((person) => {
+      if (person.name === newName) {
+        alert(`${newName} is already added to phonebook`);
+        isNewName = false;
+      }
+    });
 
-    setPersons(persons.concat(newPerson));
-    setNewName("");
+    if (isNewName) {
+      const newPerson = {
+        name: newName,
+      };
+
+      setPersons(persons.concat(newPerson));
+      setNewName("");
+    }
   };
 
   return (
@@ -33,7 +43,7 @@ const App = () => {
       <h2>Numbers</h2>
       <ul>
         {persons.map((person) => (
-          <li>{person.name}</li>
+          <li key={person.name}>{person.name}</li>
         ))}
       </ul>
     </div>
