@@ -1,11 +1,10 @@
 import React from "react";
 
 export const Total = ({ course }) => {
-  let total = 0;
-
-  course.parts.forEach((part) => {
-    total += part.exercises;
-  });
+  const total = course.parts.reduce(
+    (total, part) => (total += part.exercises),
+    0
+  );
 
   return (
     <div>
