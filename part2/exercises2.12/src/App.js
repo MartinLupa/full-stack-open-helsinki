@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Country } from "./components/Country";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -18,6 +19,7 @@ function App() {
     });
   }, []);
 
+  //filter with more than 10 countries
   if (filteredCountries.length > 10) {
     return (
       <div>
@@ -26,6 +28,8 @@ function App() {
         <p>Too many matches, specify another filter.</p>
       </div>
     );
+
+    //filter with one specific country
   } else if (filteredCountries.length === 1) {
     let languages = filteredCountries[0].languages;
     console.log(filteredCountries[0]);
@@ -49,19 +53,28 @@ function App() {
         </ul>
       </div>
     );
+    //filter with less than 10 countries
+  } else {
+    return (
+      <div>
+        find countries
+        <input type="text" onChange={handleInputChange} />
+        <ul>
+          {filteredCountries?.map((country) => (
+            <li key={country.name.common}>
+              <Country
+                name={country.name.common}
+                capital={country.capital}
+                area={country.area}
+                languages={country.languages}
+                flag={country.flags}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
-
-  return (
-    <div>
-      find countries
-      <input type="text" onChange={handleInputChange} />
-      <ul>
-        {filteredCountries?.map((country) => (
-          <li key={country.name.common}> {country.name.common}</li>
-        ))}
-      </ul>
-    </div>
-  );
 }
 
 export default App;
