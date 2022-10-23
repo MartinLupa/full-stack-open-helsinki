@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { AddPersonForm } from "./components/AddPersonForm";
 import { Filter } from "./components/Filter";
+import { Notification } from "./components/Notification";
 import { Phonebook } from "./components/Phonebook";
+import "./index.css";
 import phoneService from "./services/phones";
 
 //Run server by executing: json-server --port 3001 --watch data.json
@@ -11,6 +13,18 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleNotificationVisibility = (message) => {
+    setErrorMessage(message);
+    setIsVisible(true);
+
+    setTimeout(() => {
+      setIsVisible(false);
+      setErrorMessage(null);
+    }, 1500);
+  };
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -36,10 +50,12 @@ const App = () => {
       if (person.name === newName) {
         alert("Person already exists, do you want to update the phone number?");
         phoneService.update(newPerson, person.id);
+        handleNotificationVisibility(`${newName} was updated.`);
       }
       return;
     });
 
+    handleNotificationVisibility(`${newName} was added.`);
     phoneService
       .create(newPerson)
       .then((response) => persons.concat(response.data));
@@ -56,6 +72,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMessage} isVisible={isVisible} />
 
       <Filter eventHandler={handleFilterChange} filter={filter} />
 
@@ -67,7 +84,11 @@ const App = () => {
         number={newNumber}
       />
 
-      <Phonebook persons={persons} setPersons={setPersons} />
+      <Phonebook
+        persons={persons}
+        setPersons={setPersons}
+        handleNotificationVisibility={handleNotificationVisibility}
+      />
     </div>
   );
 };

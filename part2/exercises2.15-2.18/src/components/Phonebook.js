@@ -1,10 +1,15 @@
 import React from "react";
 import phoneService from "../services/phones";
 
-export const Phonebook = ({ persons, setPersons }) => {
+export const Phonebook = ({
+  persons,
+  setPersons,
+  handleNotificationVisibility,
+}) => {
   const handleDelete = (id) => {
     phoneService.remove(id);
-    setPersons(persons.filter((person) => person.id != id));
+    setPersons(persons.filter((person) => person.id !== id));
+    handleNotificationVisibility(`Person with id: ${id} was deleted.`);
   };
 
   return (
