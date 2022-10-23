@@ -6,7 +6,10 @@ export const AddPersonForm = ({
   numberHandler,
   name,
   number,
+  handleNotificationVisibility,
 }) => {
+  //handleNotificationVisibility(`${name} was added to the phonebook.`);
+
   return (
     <div>
       <h2>Add new</h2>
