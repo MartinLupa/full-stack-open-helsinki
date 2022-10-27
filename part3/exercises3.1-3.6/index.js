@@ -42,6 +42,18 @@ app.get("/info", (req, res) => {
   res.status(200).send(infoDisplay);
 });
 
+app.get("/api/persons/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+
+  const person = persons.find((person) => person.id === id);
+
+  if (person) {
+    res.status(200).json(person);
+  } else {
+    res.status(404).json({ error: `person of id: ${id} not found` });
+  }
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
