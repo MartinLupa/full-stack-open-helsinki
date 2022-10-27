@@ -28,6 +28,20 @@ app.get("/api/persons", (req, res) => {
   res.status(200).json(persons);
 });
 
+app.get("/info", (req, res) => {
+  const phonebookLength = persons.length;
+  const infoDisplay = `<div>
+                        <p>
+                        Phonebook has info for ${phonebookLength} people
+                        </p>
+                        <p>
+                        ${new Date()}
+                        </p>
+                      </div>`;
+
+  res.status(200).send(infoDisplay);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
