@@ -57,7 +57,7 @@ app.post("/api/notes", (request, response) => {
   const body = request.body;
 
   if (!body.content) {
-    response.status(400).json({ error: "content missing" });
+    response.status(400).json({ data: null, error: "content missing" });
   }
 
   const newNote = {
@@ -76,7 +76,9 @@ app.delete("/api/notes/:id", (request, response) => {
   const id = parseInt(request.params.id);
 
   notes = notes.filter((note) => note.id !== id);
-  response.status(204).json(`Note of id: ${id} deleted successfully.`);
+  response
+    .status(204)
+    .json({ data: `Note of id: ${id} deleted successfully.`, error: null });
 });
 
 const PORT = 3001;

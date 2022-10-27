@@ -24,10 +24,14 @@ let persons = [
   },
 ];
 
+app.use(express.json());
+
+//GET all persons
 app.get("/api/persons", (req, res) => {
   res.status(200).json(persons);
 });
 
+//GET info
 app.get("/info", (req, res) => {
   const phonebookLength = persons.length;
   const infoDisplay = `<div>
@@ -42,6 +46,7 @@ app.get("/info", (req, res) => {
   res.status(200).send(infoDisplay);
 });
 
+//GET person by id
 app.get("/api/persons/:id", (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -50,10 +55,13 @@ app.get("/api/persons/:id", (req, res) => {
   if (person) {
     res.status(200).json(person);
   } else {
-    res.status(404).json({ error: `person of id: ${id} not found` });
+    res
+      .status(404)
+      .json({ data: null, error: `person of id: ${id} not found` });
   }
 });
 
+//DELETE person by id
 app.delete("/api/persons/:id", (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -62,13 +70,39 @@ app.delete("/api/persons/:id", (req, res) => {
   if (!person) {
     return res
       .status(404)
-      .json({ error: `person of id: ${id} not found in database` });
+      .json({ data: null, error: `person of id: ${id} not found in database` });
   }
 
   persons = persons.filter((person) => person.id !== id);
-  res.status(200).json({ error: `person of id: ${id} deleted successfully` });
+  res
+    .status(200)
+    .json({ data: `person of id: ${id} deleted successfully`, error: null });
 });
 
+//POST new person
+app.post("/api/persons", (req, res) => {
+  const randomIdGenerator = () => {
+    return (randomId = Math.ceil(Math.random() * 10000));
+  };
+  const { name, number } = req.body;
+
+  const newPerson = {
+    id: randomIdGenerator(),
+    name,
+    number,
+  };
+
+  persons.concat(newPerson);
+
+  res
+    .status(201)
+    .json({
+      data: `person of id: ${newPerson.id} added successfully`,
+      error: null,
+    });
+});
+
+//App listening
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
