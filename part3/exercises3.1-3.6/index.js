@@ -86,6 +86,12 @@ app.post("/api/persons", (req, res) => {
   };
   const { name, number } = req.body;
 
+  if (!name || !number || persons.find((person) => person.name === name)) {
+    res.status(400).json({
+      data: null,
+      error: "name and number cannot be empty, and name must be unique",
+    });
+  }
   const newPerson = {
     id: randomIdGenerator(),
     name,
@@ -94,12 +100,10 @@ app.post("/api/persons", (req, res) => {
 
   persons.concat(newPerson);
 
-  res
-    .status(201)
-    .json({
-      data: `person of id: ${newPerson.id} added successfully`,
-      error: null,
-    });
+  res.status(201).json({
+    data: `person of id: ${newPerson.id} added successfully`,
+    error: null,
+  });
 });
 
 //App listening
