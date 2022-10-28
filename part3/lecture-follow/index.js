@@ -23,16 +23,32 @@ let notes = [
   },
 ];
 
-app.use(express.json());
-
+//Custom middlewares and helper functions
 //Generate ID
 const generateId = () => {
   const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
   return maxId + 1;
 };
 
+//Request logger
+const requestLogger = (request, response, next) => {
+  console.log("Method", request.method);
+  next();
+};
+
+//No route found
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+//Middlewares
+app.use(express.json());
+app.use(requestLogger);
+
 app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
+  response.send("<h1>hello world!</h1>");
 });
 
 //Fetch all notes
@@ -80,6 +96,9 @@ app.delete("/api/notes/:id", (request, response) => {
     .status(204)
     .json({ data: `Note of id: ${id} deleted successfully.`, error: null });
 });
+
+//Unknown endpoint middleware
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT, () => {

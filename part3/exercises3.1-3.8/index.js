@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 
 let persons = [
   {
@@ -24,7 +25,9 @@ let persons = [
   },
 ];
 
+//Middlewares
 app.use(express.json());
+app.use(morgan("tiny"));
 
 //GET all persons
 app.get("/api/persons", (req, res) => {
