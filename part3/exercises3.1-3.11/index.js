@@ -38,7 +38,7 @@ morgan.token("body", function (req, res) {
 //Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.json());
+app.use(express.static("build"));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
@@ -124,7 +124,7 @@ app.post("/api/persons", (req, res) => {
 });
 
 //App listening
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
 });
