@@ -117,9 +117,6 @@ app.delete("/api/persons/:id", (req, res) => {
 
 //POST new person
 app.post("/api/persons", (req, res) => {
-  const randomIdGenerator = () => {
-    return (randomId = Math.ceil(Math.random() * 10000));
-  };
   const { name, number } = req.body;
 
   if (!name || !number || persons.find((person) => person.name === name)) {
@@ -128,16 +125,15 @@ app.post("/api/persons", (req, res) => {
       error: "name and number cannot be empty, and name must be unique",
     });
   }
-  const newPerson = {
-    id: randomIdGenerator(),
+  const person = new Person({
     name,
     number,
-  };
+  });
 
-  persons.concat(newPerson);
+  person.save();
 
   res.status(201).json({
-    data: `person of id: ${newPerson.id} added successfully`,
+    data: `person of id: ${person.id} added successfully`,
     error: null,
   });
 });
