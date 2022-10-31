@@ -2,6 +2,7 @@ const { response, request } = require("express");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 let notes = [
   {
@@ -23,6 +24,18 @@ let notes = [
     important: true,
   },
 ];
+
+const connection_url = `mongodb+srv://martin-admin:${password}@cluster0.vts8w.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
+
+mongoose.connect(connection_url);
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+});
+
+const Note = mongoose.model("Note", noteSchema);
 
 //Custom middlewares and helper functions
 //Generate ID

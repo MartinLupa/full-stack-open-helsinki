@@ -1,7 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 
 let persons = [
   {
@@ -43,9 +46,25 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
+//Database connection and config
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+});
+
+const Person = mongoose.model("Person", personSchema);
+
+const connection_url = `mongodb+srv://martin-admin:${MONGO_PASSWORD}@cluster0.vts8w.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
+
+mongoose.connect(connection_url).then(() => {
+  console.log("Database connection successfull.");
+});
+
 //GET all persons
 app.get("/api/persons", (req, res) => {
-  res.status(200).json(persons);
+  Person.find({}).then((persons) => {
+    res.status(200).json(persons);
+  });
 });
 
 //GET info
