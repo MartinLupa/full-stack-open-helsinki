@@ -3,31 +3,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+const Person = require("./models/person");
+const { response } = require("express");
 
 //Morgan logger configuration
 morgan.token("body", function (req, res) {
@@ -45,20 +22,6 @@ app.use(express.static("build"));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
-
-//Database connection and config
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-const Person = mongoose.model("Person", personSchema);
-
-const connection_url = `mongodb+srv://martin-admin:${MONGO_PASSWORD}@cluster0.vts8w.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
-
-mongoose.connect(connection_url).then(() => {
-  console.log("Database connection successfull.");
-});
 
 //GET all persons
 app.get("/api/persons", (req, res) => {
@@ -83,40 +46,33 @@ app.get("/info", (req, res) => {
 });
 
 //GET person by id
-app.get("/api/persons/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    res.status(200).json(person);
-  } else {
-    res
-      .status(404)
-      .json({ data: null, error: `person of id: ${id} not found` });
-  }
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((persons) => {
+      if (persons) {
+        response.json(persons);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 //DELETE person by id
-app.delete("/api/persons/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-
-  const person = persons.find((person) => person.id === id);
-
-  if (!person) {
-    return res
-      .status(404)
-      .json({ data: null, error: `person of id: ${id} not found in database` });
-  }
-
-  persons = persons.filter((person) => person.id !== id);
-  res
-    .status(200)
-    .json({ data: `person of id: ${id} deleted successfully`, error: null });
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((persons) => {
+      if (persons) {
+        response.json(persons);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 //POST new person
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
 
   if (!name || !number || persons.find((person) => person.name === name)) {
@@ -130,13 +86,29 @@ app.post("/api/persons", (req, res) => {
     number,
   });
 
-  person.save();
-
-  res.status(201).json({
-    data: `person of id: ${person.id} added successfully`,
-    error: null,
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
+
+//Error handler
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 //App listening
 const PORT = process.env.PORT || 3001;
