@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Note = require("./models/note");
 
 let notes = [
   {
@@ -86,19 +87,19 @@ app.get("/api/notes/:id", (request, response) => {
 app.post("/api/notes", (request, response) => {
   const body = request.body;
 
-  if (!body.content) {
-    response.status(400).json({ data: null, error: "content missing" });
+  if (body.content === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  const newNote = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date(),
-    id: generateId(),
-  };
+  });
 
-  notes.concat(newNote);
-  response.status(201).json(newNote);
+  note.save().then((savedNote) => {
+    response.json(savedNote);
+  });
 });
 
 //Delete a resource
